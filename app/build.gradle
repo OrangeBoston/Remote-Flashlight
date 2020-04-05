@@ -6,12 +6,15 @@ android {
 
     defaultConfig {
         applicationId "com.orangeboston.remoteflashlight"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        android.defaultConfig.vectorDrawables.useSupportLibrary = true
+        renderscriptTargetApi 14
+        renderscriptSupportModeEnabled true
 
         ndk {
             //选择要添加的对应 cpu 类型的 .so 库。
@@ -20,9 +23,9 @@ android {
         }
 
         manifestPlaceholders = [
-                JPUSH_PKGNAME : applicationId,
+                JPUSH_PKGNAME: applicationId,
                 JPUSH_APPKEY : "d4a571041ac052e4ffc1a87f",
-                JPUSH_CHANNEL : "developer-default",
+                JPUSH_CHANNEL: "developer-default",
         ]
 
     }
@@ -34,18 +37,28 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
 //    implementation 'cn.jiguang.sdk:jpush:3.5.6'
     implementation 'cn.jiguang.sdk:jmessage:2.9.0'
     implementation 'cn.jiguang.sdk:jcore:2.2.8'
+    implementation 'com.qmuiteam:qmui:2.0.0-alpha06'
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+    implementation 'com.blankj:utilcodex:1.27.2'
+    implementation 'com.kongzue.dialog_v3x:dialog:3.1.8'
 }
