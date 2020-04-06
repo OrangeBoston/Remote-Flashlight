@@ -24,6 +24,12 @@ import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.orangeboston.remoteflashlight.base.BaseActivity;
 import com.orangeboston.remoteflashlight.utils.HandleResponseCode;
+import com.orangeboston.remoteflashlight.utils.easypermission.EasyPermission;
+import com.orangeboston.remoteflashlight.utils.easypermission.GrantResult;
+import com.orangeboston.remoteflashlight.utils.easypermission.NextAction;
+import com.orangeboston.remoteflashlight.utils.easypermission.Permission;
+import com.orangeboston.remoteflashlight.utils.easypermission.PermissionRequestListener;
+import com.orangeboston.remoteflashlight.utils.easypermission.RequestPermissionRationalListener;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
@@ -33,17 +39,16 @@ import com.qmuiteam.qmui.widget.popup.QMUIQuickAction;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jpush.im.android.api.ContactManager;
 import cn.jpush.im.android.api.JMessageClient;
 import cn.jpush.im.android.api.callback.GetUserInfoListCallback;
-import cn.jpush.im.android.api.content.TextContent;
 import cn.jpush.im.android.api.model.Conversation;
 import cn.jpush.im.android.api.model.Message;
 import cn.jpush.im.android.api.model.UserInfo;
-import cn.jpush.im.android.api.options.MessageSendingOptions;
 import cn.jpush.im.api.BasicCallback;
 
 public class MainActivity extends BaseActivity {
@@ -63,6 +68,8 @@ public class MainActivity extends BaseActivity {
     QMUIRoundButton rbtnTurnOnTest;
     @BindView(R.id.rbtn_turn_off_test)
     QMUIRoundButton rbtnTurnOffTest;
+    @BindView(R.id.rbtn_refresh_test)
+    QMUIRoundButton rbtnRefreshTest;
 
     private long mBackClickLastTime = System.currentTimeMillis();
     private String userId = "rf" + DeviceUtils.getAndroidID();
@@ -79,7 +86,7 @@ public class MainActivity extends BaseActivity {
         initTopBar();
         myInfo();
 
-
+        easypermission();
     }
 
     @OnClick({R.id.rbtn_copy, R.id.floatingActionButton, R.id.tv_username})
@@ -314,6 +321,12 @@ public class MainActivity extends BaseActivity {
                                 JMessageClient.sendMessage(message);
                             }
                         });
+                        rbtnRefreshTest.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                myInfo();
+                            }
+                        });
                     } else {
                         //获取好友列表失败
                     }
@@ -340,6 +353,37 @@ public class MainActivity extends BaseActivity {
                     .getSystemService(Context.CLIPBOARD_SERVICE);
             clip.setText(string);
         }
+    }
+
+    /**
+     * 动态权限申请:
+     */
+    private void easypermission() {
+        EasyPermission.with(this)
+                .addPermission(Permission.CAMERA)
+                .addRequestPermissionRationaleHandler(Permission.ACCESS_FINE_LOCATION, new RequestPermissionRationalListener() {
+                    @Override
+                    public void onRequestPermissionRational(String permission, boolean requestPermissionRationaleResult, final NextAction nextAction) {
+                        //这里处理具体逻辑，如弹窗提示用户等,但是在处理完自定义逻辑后必须调用nextAction的next方法
+                    }
+                })
+                .addRequestPermissionRationaleHandler(Permission.CALL_PHONE, new RequestPermissionRationalListener() {
+                    @Override
+                    public void onRequestPermissionRational(String permission, boolean requestPermissionRationaleResult, final NextAction nextAction) {
+                        //这里处理具体逻辑，如弹窗提示用户等,但是在处理完自定义逻辑后必须调用nextAction的next方法
+                    }
+                })
+                .request(new PermissionRequestListener() {
+                    @Override
+                    public void onGrant(Map<String, GrantResult> result) {
+                        //权限申请返回
+                    }
+
+                    @Override
+                    public void onCancel(String stopPermission) {
+                        //在addRequestPermissionRationaleHandler的处理函数里面调用了NextAction.next(NextActionType.STOP,就会中断申请过程，直接回调到这里来
+                    }
+                });
     }
 
 }
