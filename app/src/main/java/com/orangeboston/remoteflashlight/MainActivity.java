@@ -9,7 +9,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -23,6 +24,8 @@ import com.kongzue.dialog.v3.FullScreenDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.orangeboston.remoteflashlight.base.BaseActivity;
+import com.orangeboston.remoteflashlight.fragment.LeftFragment;
+import com.orangeboston.remoteflashlight.fragment.RightFragment;
 import com.orangeboston.remoteflashlight.utils.HandleResponseCode;
 import com.orangeboston.remoteflashlight.utils.easypermission.EasyPermission;
 import com.orangeboston.remoteflashlight.utils.easypermission.GrantResult;
@@ -30,6 +33,8 @@ import com.orangeboston.remoteflashlight.utils.easypermission.NextAction;
 import com.orangeboston.remoteflashlight.utils.easypermission.Permission;
 import com.orangeboston.remoteflashlight.utils.easypermission.PermissionRequestListener;
 import com.orangeboston.remoteflashlight.utils.easypermission.RequestPermissionRationalListener;
+import com.orangeboston.remoteflashlight.utils.qqnaviview.QQNaviView;
+import com.qmuiteam.qmui.layout.QMUIFrameLayout;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
@@ -71,9 +76,21 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.rbtn_refresh_test)
     QMUIRoundButton rbtnRefreshTest;
 
+    @BindView(R.id.qq_view_bubble)
+    QQNaviView qqViewBubble;
+    @BindView(R.id.qq_view_person)
+    QQNaviView qqViewPerson;
+    @BindView(R.id.fragment)
+    QMUIFrameLayout fragment;
+
+
     private long mBackClickLastTime = System.currentTimeMillis();
     private String userId = "rf" + DeviceUtils.getAndroidID();
     private String password = "remoteflashlight";
+
+    private Fragment currentFragment = new Fragment();
+    private LeftFragment leftFragment = new LeftFragment();
+    private RightFragment rightFragment = new RightFragment();
 
     @Override
     protected int getLayoutId() {
@@ -86,10 +103,23 @@ public class MainActivity extends BaseActivity {
         initTopBar();
         myInfo();
 
+        qqViewBubble.setBigIcon(R.drawable.bubble_big);
+        qqViewBubble.setSmallIcon(R.drawable.bubble_small);
+        qqViewBubble.check();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                qqViewPerson.lookLeft();
+            }
+        }, 50);
+
+        switchFragment(leftFragment).commit();
+
         easypermission();
     }
 
-    @OnClick({R.id.rbtn_copy, R.id.floatingActionButton, R.id.tv_username})
+    @OnClick({R.id.rbtn_copy, R.id.floatingActionButton, R.id.tv_username,
+            R.id.qq_view_bubble, R.id.qq_view_person})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_username:
@@ -117,6 +147,20 @@ public class MainActivity extends BaseActivity {
             case R.id.floatingActionButton:
 //                JMessageClient.logout();
                 addDevice();
+                break;
+            case R.id.qq_view_bubble:
+                resetIcon();
+                qqViewBubble.setBigIcon(R.drawable.bubble_big);
+                qqViewBubble.setSmallIcon(R.drawable.bubble_small);
+                qqViewPerson.lookLeft();
+                switchFragment(leftFragment).commit();
+                break;
+            case R.id.qq_view_person:
+                resetIcon();
+                qqViewPerson.setBigIcon(R.drawable.person_big);
+                qqViewPerson.setSmallIcon(R.drawable.person_small);
+                qqViewBubble.lookRight();
+                switchFragment(rightFragment).commit();
                 break;
         }
     }
@@ -183,6 +227,13 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    private void resetIcon() {
+        qqViewBubble.setBigIcon(R.drawable.pre_bubble_big);
+        qqViewBubble.setSmallIcon(R.drawable.pre_bubble_small);
+        qqViewPerson.setBigIcon(R.drawable.pre_person_big);
+        qqViewPerson.setSmallIcon(R.drawable.pre_person_small);
     }
 
     @Override
@@ -355,9 +406,27 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 动态权限申请:
-     */
+
+    private FragmentTransaction switchFragment(Fragment targetFragment) {
+
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction();
+        if (!targetFragment.isAdded()) {
+            //第一次使用switchFragment()时currentFragment为null，所以要判断一下
+            if (currentFragment != null) {
+                transaction.hide(currentFragment);
+            }
+            transaction.add(R.id.fragment, targetFragment, targetFragment.getClass().getName());
+
+        } else {
+            transaction
+                    .hide(currentFragment)
+                    .show(targetFragment);
+        }
+        currentFragment = targetFragment;
+        return transaction;
+    }
+
     private void easypermission() {
         EasyPermission.with(this)
                 .addPermission(Permission.CAMERA)

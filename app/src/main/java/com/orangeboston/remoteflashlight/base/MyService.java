@@ -1,4 +1,4 @@
-package com.orangeboston.remoteflashlight;
+package com.orangeboston.remoteflashlight.base;
 
 import cn.jpush.android.service.JCommonService;
 
