@@ -9,8 +9,11 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -24,6 +27,7 @@ import com.kongzue.dialog.v3.FullScreenDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.orangeboston.remoteflashlight.base.BaseActivity;
+import com.orangeboston.remoteflashlight.flashlight.FlashLightActivity;
 import com.orangeboston.remoteflashlight.fragment.LeftFragment;
 import com.orangeboston.remoteflashlight.fragment.RightFragment;
 import com.orangeboston.remoteflashlight.utils.HandleResponseCode;
@@ -115,7 +119,7 @@ public class MainActivity extends BaseActivity {
 
         switchFragment(leftFragment).commit();
 
-        easypermission();
+//        easypermission();
     }
 
     @OnClick({R.id.rbtn_copy, R.id.floatingActionButton, R.id.tv_username,
@@ -176,7 +180,8 @@ public class MainActivity extends BaseActivity {
         mTopBar.addRightImageButton(R.drawable.ic_more, R.id.topbar_right_image_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TipDialog.show(mContext, "别着急，正在开发~", TipDialog.TYPE.WARNING);
+//                TipDialog.show(mContext, "别着急，正在开发~", TipDialog.TYPE.WARNING);
+                ActivityUtils.startActivity(FlashLightActivity.class);
             }
         });
     }
@@ -429,7 +434,6 @@ public class MainActivity extends BaseActivity {
 
     private void easypermission() {
         EasyPermission.with(this)
-                .addPermission(Permission.CAMERA)
                 .addRequestPermissionRationaleHandler(Permission.ACCESS_FINE_LOCATION, new RequestPermissionRationalListener() {
                     @Override
                     public void onRequestPermissionRational(String permission, boolean requestPermissionRationaleResult, final NextAction nextAction) {

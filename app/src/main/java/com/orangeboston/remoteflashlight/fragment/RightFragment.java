@@ -1,5 +1,7 @@
 package com.orangeboston.remoteflashlight.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,6 +14,19 @@ import com.orangeboston.remoteflashlight.R;
 
 
 public class RightFragment extends Fragment {
+
+    private static String ARG_PARAM = "param_key";
+    private Bundle bundle;
+    private Activity mActivity;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (Activity) context;
+        bundle = getArguments().getBundle(ARG_PARAM);  //获取参数
+    }
+
+
 
     public RightFragment() {
         // Required empty public constructor
