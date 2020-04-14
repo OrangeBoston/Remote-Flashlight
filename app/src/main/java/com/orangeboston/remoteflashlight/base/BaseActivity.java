@@ -7,12 +7,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.blankj.utilcode.util.FlashlightUtils;
-import com.blankj.utilcode.util.StringUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.kongzue.dialog.interfaces.OnShowListener;
 import com.kongzue.dialog.util.BaseDialog;
 import com.kongzue.dialog.util.DialogSettings;
@@ -21,22 +17,17 @@ import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.orangeboston.remoteflashlight.MainActivity;
 import com.orangeboston.remoteflashlight.R;
+import com.orangeboston.remoteflashlight.utils.FlashUtils;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
-
-import java.util.List;
-import java.util.Locale;
 
 import butterknife.ButterKnife;
 import cn.jpush.im.android.api.ContactManager;
 import cn.jpush.im.android.api.JMessageClient;
-import cn.jpush.im.android.api.callback.GetUserInfoListCallback;
 import cn.jpush.im.android.api.content.TextContent;
 import cn.jpush.im.android.api.event.ContactNotifyEvent;
 import cn.jpush.im.android.api.event.LoginStateChangeEvent;
 import cn.jpush.im.android.api.event.MessageEvent;
-import cn.jpush.im.android.api.event.OfflineMessageEvent;
-import cn.jpush.im.android.api.model.Conversation;
 import cn.jpush.im.android.api.model.Message;
 import cn.jpush.im.android.api.model.UserInfo;
 import cn.jpush.im.api.BasicCallback;
@@ -44,6 +35,7 @@ import cn.jpush.im.api.BasicCallback;
 public abstract class BaseActivity extends AppCompatActivity {
 
     public AppCompatActivity mContext;
+    public FlashUtils flashUtils;
 
     protected abstract int getLayoutId();
 
@@ -59,6 +51,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         DialogSettings.isUseBlur = true;
         DialogSettings.style = DialogSettings.STYLE.STYLE_IOS;
         DialogSettings.theme = DialogSettings.THEME.LIGHT;
+        flashUtils = new FlashUtils(mContext);
     }
 
     public void onEventMainThread(LoginStateChangeEvent event) {
@@ -177,9 +170,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         String msg = textContent.getText();
 
         if (msg.contains("ON")) {
-            FlashlightUtils.setFlashlightStatus(true);
+            flashUtils.open();
         } else {
-            FlashlightUtils.setFlashlightStatus(false);
+            flashUtils.close();
         }
 
     }
