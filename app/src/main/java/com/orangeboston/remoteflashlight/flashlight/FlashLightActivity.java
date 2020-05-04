@@ -6,6 +6,7 @@ import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.kongzue.dialog.v3.TipDialog;
 import com.orangeboston.remoteflashlight.R;
 import com.orangeboston.remoteflashlight.base.BaseActivity;

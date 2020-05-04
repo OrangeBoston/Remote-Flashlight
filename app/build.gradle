@@ -62,7 +62,7 @@ dependencies {
     implementation 'com.qmuiteam:qmui:2.0.0-alpha06'
     implementation 'com.jakewharton:butterknife:10.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
-    implementation 'com.blankj:utilcodex:1.27.2'
+    implementation 'com.blankj:utilcode:1.28.0'
     implementation 'com.kongzue.dialog_v3x:dialog:3.1.8'
     implementation "com.android.support:multidex:${multidexVersion}"
 }
